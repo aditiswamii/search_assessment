@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:search_assessment/core/core.dart';
 import 'package:search_assessment/ui/views/home_screen.dart';
+
+
 
 void main() {
   runApp(const MyApp());
@@ -12,10 +15,18 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme().getThemeData(context),
-      home: const MyHomePage(),
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<CoreRepository>(
+          create: (context) => CoreRepository(),
+          lazy: true,
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme().getThemeData(context),
+        home: const MyHomePage(),
+      ),
     );
   }
 }

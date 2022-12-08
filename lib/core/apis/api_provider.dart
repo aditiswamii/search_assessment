@@ -10,15 +10,15 @@ import 'app_apis.dart';
 
 class ApiProvider {
 
-  Future<dynamic> get(String endPoint, {bool auth = true}) async {
+  Future<dynamic> get(String endPoint,Map<String, dynamic>? queryParameters,) async {
     var dio = Dio(); // with default Options
     dio.options.baseUrl = Apis.baseUrl;
     dio.options.connectTimeout = 3000;
     dio.options.receiveTimeout = 3000;
     late Response response;
     try {
-      response = await dio.get(endPoint);
-    } catch (e) {
+      response = await dio.get(endPoint,queryParameters: queryParameters);
+    }  on DioError catch (e) {
      debugPrint(e.toString());
     }
     return response;
@@ -52,7 +52,7 @@ class ApiProvider {
       response = await dio
           .post(endPoint.path, queryParameters: queryParameters,
           options: Options(headers: headers));
-    } catch (e) {
+    } on DioError catch  (e) {
       debugPrint(e.toString());
     }
       return response;
