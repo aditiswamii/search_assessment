@@ -1,3 +1,6 @@
+import 'dart:collection';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/model/get_user_repository_list.dart';
@@ -15,8 +18,10 @@ class HomeCubit extends Cubit<HomeState> {
   }) async {
     emit(HomeLoading());
     try {
-      UserListResponse response = await coreRepository.fetchUsers(text);
-      emit(HomeSearchSuccess(response));
+      dynamic response = await coreRepository.fetchUsers(text);
+      final LinkedHashMap<String, dynamic> searchItems =
+      LinkedHashMap.from(response);
+      emit(HomeSearchSuccess(UserListResponse.fromJson(searchItems)));
     } catch (e) {
       String message = e.toString().replaceAll('api - ', '');
       emit(HomeError(message));

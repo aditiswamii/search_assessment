@@ -4,7 +4,9 @@ import 'package:search_assessment/core/core.dart';
 
 class SearchBarWidget extends StatelessWidget {
  final double bodyMargin;
-   SearchBarWidget({super.key,required this.bodyMargin});
+ final ValueChanged<String>? onTap;
+ final ValueChanged<bool>? onTapClose;
+   SearchBarWidget({super.key,required this.bodyMargin,required this.onTap,required this.onTapClose});
    TextEditingController searchController = TextEditingController();
   // This widget is the root of your application.
   @override
@@ -28,7 +30,9 @@ class SearchBarWidget extends StatelessWidget {
             hintStyle: TextStyle(color: AppTheme.appGrey),
             prefixIcon: Icon(Icons.search,color: AppTheme.appGrey,size: 22,),
             //prefixIconConstraints:BoxConstraints(minWidth: 23, maxHeight: 20),
-            suffixIcon: Icon(Icons.close,color: AppTheme.appGrey,size: 22,),
+            suffixIcon: GestureDetector(onTap:(){
+              onTapClose!(true);
+            },child: Icon(Icons.close,color: AppTheme.appGrey,size: 22,)),
             enabledBorder: OutlineInputBorder(
                 borderRadius: const BorderRadius.all(Radius.circular(20)),
                 borderSide: BorderSide(color: AppTheme.appWhite)),
@@ -52,6 +56,7 @@ class SearchBarWidget extends StatelessWidget {
           //  _cubit.getSearchProduct(text: searchController.text);
         },
         onFieldSubmitted: (String value) {
+          onTap!(value);
           //
           // _cubit.getSearchProduct(text: value);
           // setState(() {

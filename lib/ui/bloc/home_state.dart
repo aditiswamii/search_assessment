@@ -13,7 +13,11 @@ class HomeLoading extends HomeState {
   @override
   List<Object> get props => [];
 }
+class HomeSuccess extends HomeState {
 
+  @override
+  List<Object> get props => [];
+}
 class HomeSearchSuccess extends HomeState {
   const HomeSearchSuccess(this.response);
 
