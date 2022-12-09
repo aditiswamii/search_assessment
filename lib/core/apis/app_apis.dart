@@ -1,7 +1,6 @@
 class Apis {
   static String prefix = 'https://';
   static String baseUrl = "${prefix}api.github.com";
-  static String searchUser = "/search/users";//users?q=Q
-  static String repoUser='/users/aditiswamii/repos';
-  //https://api.github.com/users/aditiswamii/repos?direction=asc
+  static String searchUser = "/search/users";
+  static String repoUser = '/users';
 }

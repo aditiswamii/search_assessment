@@ -1,7 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:search_assessment/core/core.dart';
+import 'package:search_assessment/ui/views/user_repo_sort.dart';
 import 'package:search_assessment/ui/widget/widget.dart';
 
 import '../bloc/home_cubit.dart';
@@ -32,7 +33,11 @@ class MyHomePageState extends State<MyHomePage> {
       },
       child: BlocListener<HomeCubit, HomeState>(
         listener: (context, state) {
-          if (state is HomeLoading) {}
+          if (state is HomeLoading) {
+            context.loaderOverlay.show();
+          } else {
+            context.loaderOverlay.hide();
+          }
 
           if (state is HomeError) {}
         },
@@ -50,86 +55,109 @@ class MyHomePageState extends State<MyHomePage> {
                         if (value.isNotEmpty) {
                           _cubit.searchUser(text: value);
                         }
-                      }, onTapClose: (bool value) {
-                      _cubit.searchUser(text: "");
-                    },
+                      },
+                      onTapClose: (bool value) {
+                        _cubit.searchUser(text: "");
+                      },
                     )),
                 BlocBuilder<HomeCubit, HomeState>(builder: (context, state) {
                   if (state is HomeSearchSuccess) {
                     UserListResponse userListResponse = state.response;
-                    return Container(
-                      margin: const EdgeInsets.only(top: 70),
-                      child: ListView.builder(
-                          scrollDirection: Axis.vertical,
-                          itemCount: userListResponse.items!.length,
-                          physics: const ClampingScrollPhysics(),
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return userListResponse.items!=null?Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: 100,
-                              margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                              decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      Color(0xFFcdcbcc),
-                                      Color(0xFF40343c)
-                                    ],
-                                    stops: [0, 1],
-                                    begin: AlignmentDirectional(-1, 0),
-                                    end: AlignmentDirectional(1, 0),
-                                  ),
-                                  borderRadius: BorderRadius.circular(20)),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Align(
-                                    alignment:
-                                        const AlignmentDirectional(-1, 0),
+                    return userListResponse.items != null
+                        ? Container(
+                            margin: const EdgeInsets.only(top: 70),
+                            child: ListView.builder(
+                                scrollDirection: Axis.vertical,
+                                itemCount: userListResponse.items!.length,
+                                physics: const ClampingScrollPhysics(),
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  UserRepositoryScreen(
+                                                    userName: userListResponse
+                                                        .items![index].login!,
+                                                  )));
+                                    },
                                     child: Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      padding: const EdgeInsets.all(10) ,
                                       margin: const EdgeInsets.fromLTRB(
-                                          10, 0, 10, 0),
-                                      width: 80,
-                                      height: 80,
-                                      clipBehavior: Clip.antiAlias,
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Image.network(
-                                        userListResponse
-                                            .items![index].avatarUrl!,
-                                        fit: BoxFit.cover,
+                                          10, 10, 10, 0),
+                                      decoration: BoxDecoration(
+                                          gradient: const LinearGradient(
+                                            colors: [
+                                              Color(0xFFcdcbcc),
+                                              Color(0xFF40343c)
+                                            ],
+                                            stops: [0, 1],
+                                            begin: AlignmentDirectional(-1, 0),
+                                            end: AlignmentDirectional(1, 0),
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: [
+                                          Align(
+                                            alignment:
+                                                const AlignmentDirectional(
+                                                    -1, 0),
+                                            child: Container(
+                                              margin: const EdgeInsets.fromLTRB(
+                                                  10, 0, 10, 0),
+                                              width: 80,
+                                              height: 80,
+                                              clipBehavior: Clip.antiAlias,
+                                              decoration: const BoxDecoration(
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: Image.network(
+                                                userListResponse
+                                                    .items![index].avatarUrl!,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              userListResponse
+                                                  .items![index].login!,style: TextStyle(color: AppTheme.appWhite,fontSize: 16)
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ),
-                                  Text(
-                                    userListResponse.items![index].login!,
-                                  ),
-                                ],
-                              ),
-                            ):   Container(
-                              margin: const EdgeInsets.only(top: 90),
-                              alignment: Alignment.center,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Image.asset('assets/images/empty_box.png',height: 100,width: 100,),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  // Icon(Icons.empty),
-                                  const Text(
-                                    'No Data Available',
-                                    style: TextStyle(fontSize: 14),
-                                    textAlign: TextAlign.center,
-                                  ),
-
-                                ],
-                              ),
-                            );
-                          }),
-                    );
+                                  );
+                                }),
+                          )
+                        : Container(
+                            margin: const EdgeInsets.only(top: 90),
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/images/empty_box.png',
+                                  height: 100,
+                                  width: 100,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                // Icon(Icons.empty),
+                                const Text(
+                                  'No Data Available',
+                                  style: TextStyle(fontSize: 14),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          );
                   }
                   return Container(
                     margin: const EdgeInsets.only(top: 90),
@@ -138,7 +166,11 @@ class MyHomePageState extends State<MyHomePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Image.asset('assets/images/empty_box.png',height: 100,width: 100,),
+                        Image.asset(
+                          'assets/images/empty_box.png',
+                          height: 100,
+                          width: 100,
+                        ),
                         const SizedBox(
                           height: 10,
                         ),
@@ -148,7 +180,6 @@ class MyHomePageState extends State<MyHomePage> {
                           style: TextStyle(fontSize: 14),
                           textAlign: TextAlign.center,
                         ),
-
                       ],
                     ),
                   );

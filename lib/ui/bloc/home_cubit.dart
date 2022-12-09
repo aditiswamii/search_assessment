@@ -1,11 +1,6 @@
 import 'dart:collection';
-import 'dart:convert';
-
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../core/model/get_user_repository_list.dart';
-import '../../core/model/user_list_response.dart';
-import '../../core/repository/core_repository.dart';
+import '../../core/core.dart';
 import 'package:equatable/equatable.dart';
 part 'home_state.dart';
 
@@ -20,7 +15,7 @@ class HomeCubit extends Cubit<HomeState> {
     try {
       dynamic response = await coreRepository.fetchUsers(text);
       final LinkedHashMap<String, dynamic> searchItems =
-      LinkedHashMap.from(response);
+          LinkedHashMap.from(response);
       emit(HomeSearchSuccess(UserListResponse.fromJson(searchItems)));
     } catch (e) {
       String message = e.toString().replaceAll('api - ', '');
@@ -28,11 +23,18 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
-  void userRepo() async {
+  void userRepo(String userName) async {
     emit(HomeLoading());
     try {
-      GetUserRepositoryList response = await coreRepository.fetchUsersRepo();
-      emit(HomeRepoSuccess(response));
+      dynamic response = await coreRepository.fetchUsersRepo(userName);
+      final List contactItems = response;
+      contactItems
+          .map((contactRaw) => GetUserRepositoryList.fromJson(contactRaw))
+          .toList();
+
+      emit(HomeRepoSuccess(contactItems
+          .map((contactRaw) => GetUserRepositoryList.fromJson(contactRaw))
+          .toList()));
     } catch (e) {
       String message = e.toString().replaceAll('api - ', '');
       emit(HomeError(message));

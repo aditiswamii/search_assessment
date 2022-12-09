@@ -30,7 +30,7 @@ class HomeSearchSuccess extends HomeState {
 class HomeRepoSuccess extends HomeState {
   const HomeRepoSuccess(this.response);
 
-  final GetUserRepositoryList response;
+  final List<GetUserRepositoryList> response;
 
   @override
   List<Object> get props => [response];
